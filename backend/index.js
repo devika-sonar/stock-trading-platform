@@ -1,4 +1,6 @@
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const { UserModel } = require("./model/UsersModel");
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -19,6 +21,35 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({
+            message: "Access denied. No token provided.",
+        });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({
+                message: "Invalid or expired token.",
+            });
+        }
+
+        req.user = user;
+        next();
+    });
+};
+
+app.get("/verify-token", authenticateToken, (req, res) => {
+    res.json({
+        message: "Token is valid",
+        user: req.user,
+    });
+});
 // app.get("/addHoldings", async(requestAnimationFrame,res)=>{
 //     let tempHoldings = [
 //        {
@@ -198,6 +229,51 @@ app.use(bodyParser.json());
 //     });
 //     res.send("done");
 // });
+
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    const user = await UserModel.findOne({ username: username });
+
+    if (!user) {
+        return res.status(401).json({
+            message: "User not found",
+        });
+    }
+
+    if (user.password !== password) {
+        return res.status(401).json({
+            message: "Wrong password",
+        });
+    }
+
+    const token = jwt.sign(
+        { username: username },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+    );
+
+    res.json({
+        message: "Login successful",
+        token: token,
+    });
+});
+
+app.post("/signup", async (req, res) => {
+    const { username, email, password } = req.body;
+
+    const newUser = new UserModel({
+        username: username,
+        email: email,
+        password: password,
+    });
+
+    await newUser.save();
+
+    res.json({
+        message: "User created successfully",
+    });
+});
 
 app.get("/allHoldings",async(req ,res)=>{
     let allHoldings = await HoldingsModel.find({});

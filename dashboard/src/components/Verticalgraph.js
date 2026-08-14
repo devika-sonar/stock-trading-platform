@@ -8,7 +8,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import faker from 'faker';
+
 
 ChartJS.register(
   CategoryScale,
@@ -23,17 +23,19 @@ export const options = {
   responsive: true,
   plugins: {
     legend: {
-      position: 'top' as const,
+      position: 'top' ,
     },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      text: 'Holdings',
     },
   },
 };
 
 
-
-export function VerticalGraph() {
+export function VerticalGraph({data}) {
   return <Bar options={options} data={data} />;
 }
+
+
+

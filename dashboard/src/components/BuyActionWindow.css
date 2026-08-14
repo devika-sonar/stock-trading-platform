@@ -233,3 +233,12 @@
   color: white !important;
 }
   
+
+.btn{
+  cursor: pointer;
+}
+
+.buy,
+.sell {
+  cursor: pointer;
+}

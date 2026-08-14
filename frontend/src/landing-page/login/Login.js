@@ -1,49 +1,46 @@
+
 import React, { useState } from "react";
 import axios from "axios";
 
-function Signup() {
+function Login() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3002/signup", {
+      const response = await axios.post("http://localhost:3002/login", {
         username: username,
-        email: email,
         password: password,
       });
 
       console.log(response.data);
-      alert("Signup successful!");
+
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
+
+      alert("Login successful!");
+
+     window.location.href = `http://localhost:3001/?token=${token}`;
     } catch (error) {
       console.log(error.response?.data || error.message);
-      alert("Signup failed!");
+      alert(error.response?.data?.message || "Login failed!");
     }
   };
 
   return (
     <div>
-      <h1>Signup</h1>
+      <h1>Login</h1>
 
-      <form onSubmit={handleSignup}>
+      <form onSubmit={handleLogin}>
         <div>
           <label>Username</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -56,10 +53,11 @@ function Signup() {
           />
         </div>
 
-        <button type="submit">Sign Up</button>
+        <button type="submit">Login</button>
       </form>
     </div>
   );
 }
 
-export default Signup;
+export default Login;
+

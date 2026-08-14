@@ -725,13 +725,16 @@ hr {
 }
 
 .actions span button {
-  width: 40px;
-  height: 30px;
+
+  width: 45px;
+  height: 32px;
+  padding: 5px 10px;
   border-radius: 4px;
   text-align: center;
-  margin-right: 8px;
+  margin-right: 12px;
   cursor: pointer;
 }
+
 
 .buy {
   background-color: #4184f3;
@@ -814,7 +817,7 @@ hr {
 
 .list li:hover > .actions {
   display: flex;
-  cursor: move;
+  cursor: default;
 }
 
 /* TODO */
@@ -826,6 +829,7 @@ hr {
   position: absolute;
   top: 0;
   left: 0;
+  pointer-events: none;
 }
 
 .watchlist-number ul li:hover {
